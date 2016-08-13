@@ -495,7 +495,7 @@ public enum SendPacketOpcode implements WritableIntValueHolder {
     // 移除情景喇叭
     AVATAR_MEGA_REMOVE(0x10B),
     // 活動清單
-    EVENT_LIST(0x10C),
+    EVENT_LIST(0x119),
     // 楓之谷聊天室
     MESSENGER_OPEN(0x10D),
     // 0x10E 【簽名】

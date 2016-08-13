@@ -26,8 +26,10 @@ import server.Timer.EventTimer;
 import server.Timer.MapTimer;
 import server.Timer.PingTimer;
 import server.Timer.WorldTimer;
+import server.life.MapleLifeFactory;
 import server.life.PlayerNPC;
 import server.maps.MapleMapFactory;
+import server.quest.MapleQuest;
 import tools.MapleAESOFB;
 
 public class Start {
@@ -140,9 +142,9 @@ public class Start {
         
         System.out.println("加载任务数据");
         //加载任务讯息
-       // MapleLifeFactory.loadQuestCounts(reload);
+        MapleLifeFactory.loadQuestCounts(reload);
         //加载转存到数据库的任务讯息
-       // MapleQuest.initQuests(reload);
+        MapleQuest.initQuests(reload);
         
         System.out.println("加载道具数据");
         //加载道具讯息(从WZ)

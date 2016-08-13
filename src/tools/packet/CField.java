@@ -419,8 +419,8 @@ public class CField {
         mplew.writeShort(0);
         mplew.write(CharInfo ? 1 : 2);
         mplew.writeInt(0);
-        mplew.writeInt(0x5D2);  //0fa0
-        mplew.writeInt(0x1FE);  //06b7
+        mplew.writeInt(0x094A);  //0fa0
+        mplew.writeInt(0x0633);  //06b7
         mplew.write(CharInfo);
         mplew.writeShort(0);
         if (CharInfo) {
@@ -433,16 +433,15 @@ public class CField {
             mplew.write(spawnPoint);
             mplew.writeInt(chr.getStat().getHp());
         }
-        mplew.writeInt(0);
         mplew.write(0);
-        //plew.write(0);
+        mplew.write(0);
         mplew.writeLong(PacketHelper.getTime(System.currentTimeMillis()));
         mplew.writeInt(100);
         mplew.writeShort(0);
         mplew.write(0);
         mplew.write(1);
         mplew.write(HexTool.getByteArrayFromHexString("28 00 00 00 02 00 00 00 82 16 FB 52 01 00 00 A4 08 00 00 00 00 00 00 00 00 00 00 00 F7 24 11 76 00 00 00 A4 04 00 00 00 01 00 00 A4"));
-        mplew.writeShort(0);
+        mplew.writeInt(0);
         mplew.writeLong(0);
         mplew.writeLong(0);
 

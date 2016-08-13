@@ -21,9 +21,9 @@ public class Equip extends Item implements Serializable {
     public static final long ARMOR_RATIO = 350000L;
     public static final long WEAPON_RATIO = 700000L;
     //charm: -1 = has not been initialized yet, 0 = already been worn, >0 = has teh charm exp
-    private byte state = 0, bonusState = 0, oldState = 0, upgradeSlots = 0, level = 0, vicioushammer = 0, platinumhammer = 0, enhance = 0, reqLevel = 0, yggdrasilWisdom = 0, bossDamage = 0, ignorePDR = 0, totalDamage = 0, allStat = 0, karmaCount = -1, fire = -1, starforce;
+    private byte state = 0, bonusState = 0, oldState = 0, upgradeSlots = 0, level = 0, vicioushammer = 0, platinumhammer = 0, enhance = 0, reqLevel = 0, yggdrasilWisdom = 0, bossDamage = 0, ignorePDR = 0, totalDamage = 0, allStat = 0, karmaCount = -1, fire = -1, starforce = 1;
     private short str = 0, dex = 0, _int = 0, luk = 0, hp = 0, mp = 0, watk = 0, matk = 0, wdef = 0, mdef = 0, acc = 0, avoid = 0, hands = 0, speed = 0, jump = 0, charmExp = 0, pvpDamage = 0, enhanctBuff = 0, soulname, soulenchanter, soulpotential;
-    private int durability = -1, incSkill = -1, potential1 = 0, potential2 = 0, potential3 = 0, bonuspotential1 = 0, bonuspotential2 = 0, bonuspotential3 = 0, fusionAnvil = 0, socket1 = 0, socket2 = 0, socket3 = 0, soulskill, limitBreak = 0;
+    private int durability = -1, incSkill = -1, potential1 = 0, potential2 = 0, potential3 = 0, bonuspotential1 = 0, bonuspotential2 = 0, bonuspotential3 = 0, fusionAnvil = 0, socket1 = -1, socket2 = -1, socket3 = -1, soulskill, limitBreak = 0;
     private long itemEXP = 0;
     private boolean finalStrike = false;
     private boolean trace = false;

@@ -91,6 +91,7 @@ public class PacketHelper {
             mplew.writeShort(started.size());
             for (MapleQuestStatus q : started) {
                 mplew.writeShort(q.getQuest().getId());
+                mplew.writeShort(0);
                 if (q.hasMobKills()) {
                     StringBuilder sb = new StringBuilder();
                     for (Iterator i$ = q.getMobKills().values().iterator(); i$.hasNext();) {
@@ -158,6 +159,7 @@ public class PacketHelper {
             mplew.writeShort(completed.size());
             for (MapleQuestStatus q : completed) {
                 mplew.writeShort(q.getQuest().getId());
+                mplew.writeShort(0);
                 mplew.writeInt(KoreanDateUtil.getQuestTimestamp(q.getCompletionTime()));
                 //v139 changed from long to int
             }
@@ -189,7 +191,7 @@ public class PacketHelper {
             //技能不知道为什么 错误
             for (Entry<Skill, SkillEntry> skill : skills.entrySet()) {
                 if(((Skill) skill.getKey()) != null){
-                       mplew.writeInt(((Skill) skill.getKey()).getId());
+                   mplew.writeInt(((Skill) skill.getKey()).getId());
                    if (((Skill) skill.getKey()).isLinkSkills()) {
                        mplew.writeInt(((SkillEntry) skill.getValue()).teachId);
                    } else if (((Skill) skill.getKey()).isTeachSkills()) {
@@ -202,7 +204,6 @@ public class PacketHelper {
                        mplew.writeInt(((SkillEntry) skill.getValue()).masterlevel);
                    }
                 }
-
             }
             int v87 = 0;
             mplew.writeShort(v87);
@@ -566,13 +567,13 @@ public class PacketHelper {
         chr.getCharacterCard().connectData(mplew);
         mplew.writeReversedLong(PacketHelper.getTime(System.currentTimeMillis()));
         mplew.write(0);
-        mplew.writeReversedInt(PacketHelper.getTime(System.currentTimeMillis()));
+        mplew.writeReversedInt(DateUtil.getTime(System.currentTimeMillis()));
     }
 
     public static void addCharStats(MaplePacketLittleEndianWriter mplew, MapleCharacter chr) {
         mplew.writeInt(chr.getId());
         mplew.writeInt(chr.getId());
-        mplew.writeInt(0);// 132  本来是两个 INT  一个是; 0 一个是   本来是1
+        mplew.writeInt(0x2C);// 132  本来是两个 INT  一个是; 0 一个是   本来是1
 
         mplew.writeAsciiString(chr.getName(), 13);
         
@@ -644,11 +645,11 @@ public class PacketHelper {
 
         addPartTimeJob(mplew, MapleCharacter.getPartTime(chr.getId()));//14位
         chr.getCharacterCard().connectData(mplew);//9位*9个卡槽
-        mplew.writeReversedInt(DateUtil.getTime(System.currentTimeMillis()));
-        mplew.writeReversedLong(DateUtil.getTime(System.currentTimeMillis()));
+        mplew.writeReversedInt(PacketHelper.getTime(System.currentTimeMillis()));
+        mplew.writeReversedLong(PacketHelper.getTime(System.currentTimeMillis()));
         
 
-        mplew.write(0x16);  //未知-->常见 c4,16 
+        mplew.write(0x16);  //未知-->常见 c4,16 ,be
     }
 
     public static void addCharLook(MaplePacketLittleEndianWriter mplew, MapleCharacterLook chr, boolean mega, boolean second) {
@@ -788,10 +789,10 @@ public class PacketHelper {
             addExpirationTime(mplew, item.getExpiration());
             mplew.writeInt(chr == null ? -1 : chr.getExtendedSlots().indexOf(item.getItemId()));
             if (item.getType() == 1) {
-                mplew.write(0);
+                //mplew.write(0);
                 final Equip equip = Equip.calculateEquipStats((Equip) item);
                 addEquipStats(mplew, equip);
-                addEquipBonusStats(mplew, equip);
+                addEquipBonusStats(mplew, equip, hasUniqueId);
             } else {
                 mplew.writeShort(item.getQuantity());
                 mplew.writeMapleAsciiString(item.getOwner());
@@ -801,7 +802,7 @@ public class PacketHelper {
                     mplew.writeLong(/*(int)*/(item.getInventoryId() <= 0 ? -1 : item.getInventoryId()));
                     //mplew.writeShort(0);
                 }
-                mplew.write(HexTool.getByteArrayFromHexString("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00")); // 推測位置(186)
+                mplew.writeZeroBytes(19);                
             }
         }
     }
@@ -961,7 +962,7 @@ public class PacketHelper {
         }
     }
 
-    public static void addEquipBonusStats(MaplePacketLittleEndianWriter mplew, Equip equip) {
+    public static void addEquipBonusStats(MaplePacketLittleEndianWriter mplew, Equip equip, boolean hasUniqueId) {
         //擁有者名字
         mplew.writeMapleAsciiString(equip.getOwner());
         //潛能等級 17 = 特殊rare, 18 = 稀有epic, 19 = 罕見unique, 20 = 傳說legendary, potential flags. special grade is 14 but it crashes
@@ -985,8 +986,9 @@ public class PacketHelper {
             mplew.writeShort(equip.getSocket(i) % 10000);
         }
 
-        //Ver182手記……這裡為0或沒有這個那麼將無法使用楓方塊
-        mplew.writeLong(/*equip.getInventoryId()*/-1); //some tracking ID
+        if (!hasUniqueId) {
+            mplew.writeLong(equip.getInventoryId() <= 0 ? -1 : equip.getInventoryId());
+        }
         mplew.writeLong(getTime(-2));
         mplew.writeInt(-1);
         mplew.writeLong(0);
@@ -1005,8 +1007,9 @@ public class PacketHelper {
         //靈魂潛能
         mplew.writeShort(equip.getSoulPotential());
         //突破傷害上限
-        mplew.writeInt(equip.getMaxDamage());
-        mplew.writeLong(getTime(-2));
+        //mplew.writeInt(equip.getMaxDamage());
+        mplew.writeInt(0);
+        //mplew.writeLong(getTime(-2));
     }
 
     public static void serializeMovementList(MaplePacketLittleEndianWriter lew, List<LifeMovementFragment> moves) {
@@ -1041,7 +1044,7 @@ public class PacketHelper {
         mplew.writeLong(mask);
         mplew.write(0);
         for (int i = 0; i < 3; i++) {
-            mplew.writeInt(-1);
+            mplew.writeInt(-2);
         }
         mplew.writeShort(0);
         mplew.writeInt(0);
@@ -1050,14 +1053,20 @@ public class PacketHelper {
             
             mplew.write(chr.getBuddylist().getCapacity()); // 好友上限
             
-            mplew.write(chr.getBlessOfFairyOrigin() != null); // 精靈的祝福
-            if (chr.getBlessOfFairyOrigin() != null) {
-                mplew.writeMapleAsciiString(chr.getBlessOfFairyOrigin());
-            }
-            mplew.write(chr.getBlessOfEmpressOrigin() != null); // 女皇的祝福
-            if (chr.getBlessOfEmpressOrigin() != null) {
-                mplew.writeMapleAsciiString(chr.getBlessOfEmpressOrigin());
-            }
+//  Mak 测试         
+//            mplew.write(chr.getBlessOfFairyOrigin() != null); // 精靈的祝福
+//            if (chr.getBlessOfFairyOrigin() != null) {
+//                mplew.writeMapleAsciiString(chr.getBlessOfFairyOrigin());
+//            }
+//            mplew.write(chr.getBlessOfEmpressOrigin() != null); // 女皇的祝福
+//            if (chr.getBlessOfEmpressOrigin() != null) {
+//                mplew.writeMapleAsciiString(chr.getBlessOfEmpressOrigin());
+//            }
+//            
+            mplew.write(0);      
+            mplew.write(0);            
+//  Mak 测试        
+            
             // 終極冒險家訊息
             MapleQuestStatus ultExplorer = chr.getQuestNoAdd(MapleQuest.getInstance(GameConstants.ULT_EXPLORER));
             mplew.write((ultExplorer != null) && (ultExplorer.getCustomData() != null));
@@ -1072,14 +1081,12 @@ public class PacketHelper {
             addMoneyInfo(mplew, chr);// 楓幣
             mplew.writeInt(chr.getId());
             mplew.writeInt(0); // 小鋼珠
-        mplew.writeZeroBytes(12);
-        mplew.writeInt(chr.getId());
-        mplew.writeZeroBytes(31);
-
-        addPotionPotInfo(mplew, chr);
+	        mplew.writeZeroBytes(12);
+	        mplew.writeInt(chr.getId());
+	        mplew.writeZeroBytes(31);
+	
+	        addPotionPotInfo(mplew, chr);
         }
-
-
 
         if ((mask & 4) != 0) {
             addInventoryInfo(mplew, chr);//道具訊息
@@ -1167,42 +1174,74 @@ public class PacketHelper {
         if ((mask & 1) != 0) {
             addHonorInfo(mplew, chr);//內在能力聲望訊息
         }
-                mplew.write(1);
-        mplew.writeZeroBytes(16); // 
-                mplew.writeInt(-1);
+        
+        {
+        	mplew.writeShort(0);    //????
+	        mplew.writeInt(1);
+	        mplew.writeInt(0);
+	        //or
+//	        mplew.writeInt(0);
+//	        mplew.writeInt(95000);
+        }
+        mplew.write(1);
+        mplew.writeZeroBytes(16);
+        mplew.writeInt(-1);
+                
         mplew.writeZeroBytes(16);
         mplew.writeLong(getTime(-2));
         addEvolutionInfo(mplew, chr);//
         mplew.write(0);
         mplew.writeInt(0); 
-
         mplew.writeLong(getTime(-2));
 
         mplew.writeInt(0);
+        mplew.writeInt(chr.getId());   //user id
+        mplew.writeZeroBytes(12);
+        mplew.writeLong(getTime(-2));
+        
+
+        mplew.writeInt(10);       
+ //mak
+//		List<int,String> acceptStr = new ArrayList<int,String>();
+//		acceptStr.add("accept=0;date=16/08/06");
+//		acceptStr.add("check1=0;cDate=16/08/10");
+//        if ((mask & 0x4000) != 0) {
+//            mplew.writeShort(acceptStr.size());
+//            for (int i = 0; i < acceptStr.size(); ++i) {
+//                mplew.writeMapleAsciiString(acceptStr.get(i));
+//            }
+//        }
+        
+        mplew.writeShort(2);
+        mplew.writeInt(1);
+        mplew.writeMapleAsciiString("accept=0;date=16/08/08");
+        mplew.writeInt(9);
+        mplew.writeMapleAsciiString("check1=0;cDate=16/08/12");        
+///c测试写        
+        
         mplew.writeInt(0);
+        mplew.writeShort(0);
         mplew.write(new byte[]{0, 1, 0});
         mplew.writeLong(1);
-        mplew.writeInt(0);
-        
-                mplew.writeLong(getTime(-2));//
+        mplew.writeInt(100);
+        mplew.writeLong(PacketHelper.getTime(System.currentTimeMillis()));
         mplew.writeInt(0);//
         mplew.writeInt(0);
         mplew.writeInt(0);
-        //mplew.write(0);
         mplew.writeInt(0);
+        mplew.write(0);
         if ((mask & 0x2000) != 0) {
             addCoreAura(mplew, chr);
-            mplew.write(1);
         }
-        
         mplew.writeInt(0);
         mplew.writeInt(chr.getClient().getAccID());
         mplew.writeInt(chr.getId());
         addRedLeafInfo(mplew, chr);
-        mplew.writeInt(chr.getId());
-        mplew.writeLong(0);
-        mplew.writeLong(getTime(-2L));
-        mplew.writeInt(30);
+        
+//        mplew.writeInt(chr.getId());
+//        mplew.writeLong(0);
+//        mplew.writeLong(getTime(-2L));
+//        mplew.writeInt(30);
     }
     
     public static void UnkFunction(final MaplePacketLittleEndianWriter mplew) {
@@ -1313,23 +1352,29 @@ public class PacketHelper {
 //        mplew.writeInt(aura.getId()); //nvr change//176-
         //mplew.writeInt(chr.getId());
         mplew.writeInt(0);
+ 
         int level = chr.getSkillLevel(80001151) > 0 ? chr.getSkillLevel(80001151) : chr.getSkillLevel(1214);
         mplew.writeInt(level);
-        mplew.writeInt(aura.getExpire());//timer
-      //  mplew.writeInt(0);
+        
+      //  mplew.writeInt(aura.getExpire());//timer
+        mplew.writeInt(0);
         mplew.writeInt(0);
         mplew.writeInt(aura.getAtt());//wep att
         mplew.writeInt(aura.getDex());//dex
+        
         mplew.writeInt(aura.getLuk());//luk
         mplew.writeInt(aura.getMagic());//magic att
         mplew.writeInt(aura.getInt());//int
         mplew.writeInt(aura.getStr());//str
+        
         mplew.writeInt(0);
         mplew.writeInt(aura.getTotal());//max
         mplew.writeInt(0);
         mplew.writeInt(0);
+        
         mplew.writeLong(getTime(System.currentTimeMillis() + 86400000L));
-        mplew.writeShort(MapleJob.is蒼龍俠客(chr.getJob()) && MapleJob.is林芝林(chr.getJob()) ? 1 : 0);
+        mplew.write(MapleJob.is蒼龍俠客(chr.getJob()) && MapleJob.is林芝林(chr.getJob()) ? 1 : 0);
+        mplew.write(1);
     }
 
     public static void addStolenSkills(MaplePacketLittleEndianWriter mplew, MapleCharacter chr, int jobNum, boolean writeJob) {

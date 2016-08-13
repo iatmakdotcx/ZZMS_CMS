@@ -190,9 +190,9 @@ public class InterServerHandler {
         player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
         player.giveSilentDebuff(PlayerBuffStorage.getDiseaseFromStorage(player.getId()));
 
-        c.getSession().write(CWvsContext.updateCrowns(new int[]{-1, -1, -1, -1, -1}));
+       // c.getSession().write(CWvsContext.updateCrowns(new int[]{-1, -1, -1, -1, -1}));
         // =====活動清單=====
-//        List<String> eventMessage = new ArrayList();
+//        List<String> eventMessage = new ArrayList<String>();
 //        String notice = "楓之谷4月~5月活動";
 //        eventMessage.add("楓之谷秋天活動!");
 //        eventMessage.add("[獅子王城] 全新的獅子王城");

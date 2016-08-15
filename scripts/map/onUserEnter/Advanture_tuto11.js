@@ -13,7 +13,7 @@ function action(mode, type, selection) {
 
 	if (status == 0) {
 		ms.getDirectionStatus(true);
-		ms.EnableUI(1);
+		ms.lockUI(1);
 		ms.environmentChange("maplemap/enter/10000", 13);
 		ms.getDirectionInfo(1, 1000);
 		ms.getDirectionStatus(true);
@@ -37,7 +37,7 @@ function action(mode, type, selection) {
 		ms.sendSelfTalk("我也先到那邊看看吧.");
 	} else if (status == 8) {
 		ms.removeNPCRequestController(10300);
-		ms.introEnableUI(0);
+		ms.lockUI(0);
 		ms.dispose();
 	} else {
 		ms.dispose();

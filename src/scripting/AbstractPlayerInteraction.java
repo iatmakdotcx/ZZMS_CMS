@@ -74,7 +74,7 @@ public abstract class AbstractPlayerInteraction {
         AbstractPlayerInteraction.id2 = id2;
         AbstractPlayerInteraction.script = script;
     }
-
+    
     public final MapleClient getClient() {
         return c;
     }
@@ -1419,7 +1419,7 @@ public abstract class AbstractPlayerInteraction {
     public final void lockKey(final boolean enabled) {
         c.getSession().write(UIPacket.lockKey(enabled));
     }
-
+    
     public void lockUI(boolean enable) {
         c.getSession().write(CField.UIPacket.lockUI(enable));
     }
@@ -1438,6 +1438,10 @@ public abstract class AbstractPlayerInteraction {
 
     public final void disableOthers(final boolean enabled, final int enable2) {
         c.getSession().write(UIPacket.disableOthers(enabled, enable2));
+    }
+    
+    public final void getDirectionInfo(final int map, final int portal) {
+    	c.getSession().write(UIPacket.getDirectionInfo(map, portal));
     }
 
     public void getDirectionStatus(boolean enable) {

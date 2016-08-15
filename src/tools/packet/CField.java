@@ -28,6 +28,7 @@ import tools.HexTool;
 import tools.Pair;
 import tools.Triple;
 import tools.data.MaplePacketLittleEndianWriter;
+import tools.packet.CField.UIPacket;
 import tools.packet.provider.SpecialEffectType;
 
 public class CField {
@@ -4742,6 +4743,9 @@ public class CField {
         // 1 Enable 0: Disable 
         public static byte[] lockUI(boolean enable) {
             return UIPacket.lockUI(enable ? 1 : 0, enable ? 1 : 0);
+        }
+        public static byte[] lockUI(int enable) {
+            return UIPacket.lockUI(enable, enable);
         }
 
         public static byte[] lockUI(int enable, int enable2) {

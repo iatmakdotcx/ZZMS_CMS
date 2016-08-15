@@ -1871,7 +1871,7 @@ public class MapleCharacter extends AnimatedMapleMapObject implements Serializab
         }
         mplew.writeShort(questinfo.size()); // // Party Quest data (quest needs to be added in the quests list)
         for (final Entry<Integer, String> q : questinfo.entrySet()) {
-            mplew.writeShort(q.getKey());
+            mplew.writeInt(q.getKey());
             mplew.writeMapleAsciiString(q.getValue() == null ? "" : q.getValue());
         }
     }

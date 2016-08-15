@@ -1052,20 +1052,15 @@ public class PacketHelper {
             addCharStats(mplew, chr); // 角色狀態訊息
             
             mplew.write(chr.getBuddylist().getCapacity()); // 好友上限
-            
-//  Mak 测试         
-//            mplew.write(chr.getBlessOfFairyOrigin() != null); // 精靈的祝福
-//            if (chr.getBlessOfFairyOrigin() != null) {
-//                mplew.writeMapleAsciiString(chr.getBlessOfFairyOrigin());
-//            }
-//            mplew.write(chr.getBlessOfEmpressOrigin() != null); // 女皇的祝福
-//            if (chr.getBlessOfEmpressOrigin() != null) {
-//                mplew.writeMapleAsciiString(chr.getBlessOfEmpressOrigin());
-//            }
-//            
-            mplew.write(0);      
-            mplew.write(0);            
-//  Mak 测试        
+    
+            mplew.write(chr.getBlessOfFairyOrigin() != null); // 精靈的祝福
+            if (chr.getBlessOfFairyOrigin() != null) {
+                mplew.writeMapleAsciiString(chr.getBlessOfFairyOrigin());
+            }
+            mplew.write(chr.getBlessOfEmpressOrigin() != null); // 女皇的祝福
+            if (chr.getBlessOfEmpressOrigin() != null) {
+                mplew.writeMapleAsciiString(chr.getBlessOfEmpressOrigin());
+            }
             
             // 終極冒險家訊息
             MapleQuestStatus ultExplorer = chr.getQuestNoAdd(MapleQuest.getInstance(GameConstants.ULT_EXPLORER));
@@ -1201,7 +1196,7 @@ public class PacketHelper {
         
 
         mplew.writeInt(10);       
- //mak
+//mak  不要这些消息也可以
 //		List<int,String> acceptStr = new ArrayList<int,String>();
 //		acceptStr.add("accept=0;date=16/08/06");
 //		acceptStr.add("check1=0;cDate=16/08/10");
@@ -1212,11 +1207,7 @@ public class PacketHelper {
 //            }
 //        }
         
-        mplew.writeShort(2);
-        mplew.writeInt(1);
-        mplew.writeMapleAsciiString("accept=0;date=16/08/08");
-        mplew.writeInt(9);
-        mplew.writeMapleAsciiString("check1=0;cDate=16/08/12");        
+        mplew.writeShort(0);   
 ///c测试写        
         
         mplew.writeInt(0);

@@ -190,7 +190,7 @@ public class InterServerHandler {
         player.silentGiveBuffs(PlayerBuffStorage.getBuffsFromStorage(player.getId()));
         player.giveSilentDebuff(PlayerBuffStorage.getDiseaseFromStorage(player.getId()));
 
-       // c.getSession().write(CWvsContext.updateCrowns(new int[]{-1, -1, -1, -1, -1}));
+        c.getSession().write(CWvsContext.updateCrowns(new int[]{-1, -1, -1, -1, -1}));
         // =====活動清單=====
 //        List<String> eventMessage = new ArrayList<String>();
 //        String notice = "楓之谷4月~5月活動";
@@ -207,13 +207,16 @@ public class InterServerHandler {
         c.getSession().write(CWvsContext.updateMount(player, false));
 //        c.getSession().write(CWvsContext.updateSkills(c.getPlayer().getSkills(), false));//skill to 0 "fix"
         c.getSession().write(InventoryPacket.updateInventorySlot());
-        c.getSession().write(CWvsContext.temporaryStats_Reset());
+        c.getSession().write(CWvsContext.temporaryStats_Reset());     
 
+        
         c.getSession().write(CWvsContext.broadcastMsg(channelServer.getServerMessage(player.getWorld())));
-        if (player.isIntern()) {//GM登入自動隱身並無敵處理
-            SkillFactory.getSkill(9001004).getEffect(1).applyTo(player);
-            player.setInvincible(true);
-        }
+//        if (player.isIntern()) {
+//        	//GM登入自動隱身
+//            SkillFactory.getSkill(9001004).getEffect(1).applyTo(player);
+//            //無敵處理
+//            player.setInvincible(true);
+//        }
         if (player.getQuestNoAdd(MapleQuest.getInstance(GameConstants.墜飾欄)) != null
                 && player.getQuestNoAdd(MapleQuest.getInstance(GameConstants.墜飾欄)).getCustomData() != null
                 && "0".equals(player.getQuestNoAdd(MapleQuest.getInstance(GameConstants.墜飾欄)).getCustomData())) {//更新永久墜飾欄
@@ -276,7 +279,8 @@ public class InterServerHandler {
             FileoutputUtil.outputFileError(FileoutputUtil.Login_Error, e);
         }
         player.sendMacros();
-        player.showNote();
+        //TODO:Mak_目前有问题,先注释掉，这个note也不晓得哪用
+        //player.showNote();
         player.sendImp();
         player.updatePartyMemberHP();
         player.startFairySchedule(false);
@@ -284,7 +288,7 @@ public class InterServerHandler {
         if (MapleJob.is神之子(player.getJob())) {
             c.getSession().write(CWvsContext.updateSkills(player.getSkills(), false));
         }
-        int job = c.getPlayer().getJob();
+        //int job = c.getPlayer().getJob();
         c.getSession().write(CField.getKeymap(player.getKeyLayout(), player));//fix keylayout?
         player.updatePetAuto();
         player.expirationTask(true, transfer == null);
